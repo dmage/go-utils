@@ -1,8 +1,11 @@
-package utils
+package utils_test
 
-import "testing"
+import (
+	"fmt"
+	. "github.com/dmage/go-utils"
+)
 
-func TestSpawnWorkers(t *testing.T) {
+func ExampleSpawnWorkers() {
 	inChan := make(chan int)
 	outChan := make(chan int)
 
@@ -28,8 +31,7 @@ func TestSpawnWorkers(t *testing.T) {
 
 	collector.Wait()
 
-	want := 0*0 + 1*1 + 2*2 + 3*3 + 4*4
-	if sum != want {
-		t.Errorf("sum = %v, want = %v\n", sum, want)
-	}
+	fmt.Println(sum) // 0*0 + 1*1 + 2*2 + 3*3 + 4*4 == 30
+
+	// Output: 30
 }
