@@ -13,18 +13,19 @@ func TestSpawnWorkers(t *testing.T) {
 		}
 	})
 
-	workers := SpawnWorkers(3, func() {
+	SpawnWorkers(3, func() {
 		for i := range inChan {
 			outChan <- i * i
 		}
+	}).Defer(func() {
+		close(outChan)
 	})
 
 	for i := 0; i < 5; i++ {
 		inChan <- i
 	}
 	close(inChan)
-	workers.Wait()
-	close(outChan)
+
 	collector.Wait()
 
 	want := 0*0 + 1*1 + 2*2 + 3*3 + 4*4
