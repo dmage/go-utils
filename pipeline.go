@@ -24,8 +24,9 @@ func (p *Pipeline) Run() *Workers {
 	inChan := make(chan interface{})
 	var outChan chan interface{}
 
+	var last *Workers
 	func(inChan <-chan interface{}) {
-		SpawnWorkers(1, func() {
+		last = SpawnWorkers(1, func() {
 			p.Last.Worker(inChan)
 		})
 	}(inChan)
@@ -43,10 +44,11 @@ func (p *Pipeline) Run() *Workers {
 	}
 
 	outChan = inChan
-	last := SpawnWorkers(p.First.N, func() {
+	SpawnWorkers(p.First.N, func() {
 		p.First.Worker(outChan)
 	}).Defer(func() {
 		close(outChan)
 	})
+
 	return last
 }
